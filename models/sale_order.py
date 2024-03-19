@@ -23,7 +23,8 @@ class SaleOrder(models.Model):
             for line in rec.order_line:
                 previous_taxes_ids = rec.taxes.mapped('tax_id').ids
                 if line.tax_id:
-                    price = line.price_unit
+                    price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+                    #price = line.price_unit
                     taxes = line.tax_id.compute_all(
                         price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id)['taxes']
                     val_list = []
